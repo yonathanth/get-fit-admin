@@ -23,7 +23,7 @@ jobs:
 
             echo "🚀 Starting admin deployment..."
 
-            cd /home/deploy/apps/getfit-admin
+            cd /home/deploy/apps/getfit-admin/get-fit-admin
 
             echo "📥 Pulling latest code..."
             git fetch origin master

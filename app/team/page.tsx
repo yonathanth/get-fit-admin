@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 export default function TeamPage() {
   const [team, setTeam] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<"MANAGEMENT" | "TRAINER" | "ALL">("MANAGEMENT");
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState<any>({
     name: "",
     role: "",
+    category: "MANAGEMENT",
     bio: "",
     imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
     specializations: "",
@@ -66,16 +68,21 @@ export default function TeamPage() {
     }
   };
 
+  const filteredTeam = team.filter((m) => {
+    if (selectedCategory === "ALL") return true;
+    return (m.category || "MANAGEMENT") === selectedCategory;
+  });
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl sm:text-4xl font-impact text-white uppercase tracking-tight italic">
-            Coaches & <span className="text-primary">Staff</span>
+            Staff & <span className="text-primary">Trainers</span>
           </h2>
           <p className="text-xs sm:text-sm font-inter text-secondary mt-0.5">
-            Manage fitness trainers, nutrition specialists, and credentials
+            Manage Management Leadership (About Us) and Personal Trainers (Register Page)
           </p>
         </div>
 
@@ -84,6 +91,7 @@ export default function TeamPage() {
             setFormData({
               name: "",
               role: "",
+              category: selectedCategory === "ALL" ? "MANAGEMENT" : selectedCategory,
               bio: "",
               imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
               specializations: "",
@@ -98,7 +106,41 @@ export default function TeamPage() {
           }}
           className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-black font-impact text-base tracking-wider uppercase transition-all cursor-pointer"
         >
-          Add Coach / Staff
+          Add Staff Member
+        </button>
+      </div>
+
+      {/* Category Tabs */}
+      <div className="flex items-center gap-2 border-b border-white/5 pb-3">
+        <button
+          onClick={() => setSelectedCategory("MANAGEMENT")}
+          className={`px-4 py-2 rounded-xl text-xs font-inter font-bold uppercase transition-all cursor-pointer ${
+            selectedCategory === "MANAGEMENT"
+              ? "bg-primary text-black shadow-md"
+              : "bg-surface border border-white/5 text-zinc-400 hover:text-white"
+          }`}
+        >
+          Management Team ({team.filter((m) => (m.category || "MANAGEMENT") === "MANAGEMENT").length})
+        </button>
+        <button
+          onClick={() => setSelectedCategory("TRAINER")}
+          className={`px-4 py-2 rounded-xl text-xs font-inter font-bold uppercase transition-all cursor-pointer ${
+            selectedCategory === "TRAINER"
+              ? "bg-primary text-black shadow-md"
+              : "bg-surface border border-white/5 text-zinc-400 hover:text-white"
+          }`}
+        >
+          Personal Trainers ({team.filter((m) => m.category === "TRAINER").length})
+        </button>
+        <button
+          onClick={() => setSelectedCategory("ALL")}
+          className={`px-4 py-2 rounded-xl text-xs font-inter font-bold uppercase transition-all cursor-pointer ${
+            selectedCategory === "ALL"
+              ? "bg-primary text-black shadow-md"
+              : "bg-surface border border-white/5 text-zinc-400 hover:text-white"
+          }`}
+        >
+          All Staff ({team.length})
         </button>
       </div>
 
@@ -106,15 +148,15 @@ export default function TeamPage() {
       {loading ? (
         <div className="py-20 text-center text-secondary">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-          <p className="text-xs font-inter">Loading coaching staff...</p>
+          <p className="text-xs font-inter">Loading staff list...</p>
         </div>
-      ) : team.length === 0 ? (
+      ) : filteredTeam.length === 0 ? (
         <div className="p-12 rounded-2xl bg-surface border border-white/5 text-center text-secondary text-xs font-inter">
-          No team members added yet. Click &quot;Add Coach / Staff&quot; above.
+          No team members in this category yet. Click &quot;Add Staff Member&quot; above.
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-inter">
-          {team.map((member) => (
+          {filteredTeam.map((member) => (
             <div
               key={member.id}
               className="rounded-2xl bg-surface border border-white/5 overflow-hidden hover:border-primary/40 transition-all duration-300 flex flex-col justify-between group"
@@ -127,6 +169,11 @@ export default function TeamPage() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                  <div className="absolute top-3 left-3">
+                    <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-black/70 border border-white/10 text-primary">
+                      {member.category === "TRAINER" ? "Personal Trainer" : "Management"}
+                    </span>
+                  </div>
                   <div className="absolute top-3 right-3">
                     <span
                       className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase ${
@@ -196,21 +243,23 @@ export default function TeamPage() {
                     onClick={() => {
                       setFormData({
                         ...member,
+                        category: member.category || "MANAGEMENT",
                         specializations: Array.isArray(member.specializations)
                           ? member.specializations.join(", ")
-                          : member.specializations,
+                          : member.specializations || "",
                       });
                       setShowModal(true);
                     }}
-                    className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-secondary hover:text-white transition-colors"
-                    title="Edit Member"
+                    className="p-1.5 rounded-lg bg-surface border border-white/10 hover:border-primary/40 text-secondary hover:text-white transition-colors cursor-pointer"
+                    title="Edit"
                   >
                     <span className="material-symbols-outlined text-base">edit</span>
                   </button>
+
                   <button
                     onClick={() => handleDeleteMember(member.id)}
-                    className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
-                    title="Delete Member"
+                    className="p-1.5 rounded-lg bg-surface border border-white/10 hover:border-rose-500/40 text-secondary hover:text-rose-400 transition-colors cursor-pointer"
+                    title="Delete"
                   >
                     <span className="material-symbols-outlined text-base">delete</span>
                   </button>
@@ -221,105 +270,137 @@ export default function TeamPage() {
         </div>
       )}
 
-      {/* Add / Edit Member Modal */}
+      {/* Add / Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-xl bg-surface border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/5">
+          <div className="w-full max-w-xl bg-surface border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-white/5 pb-4">
               <h3 className="text-2xl font-impact text-white uppercase tracking-tight italic">
-                {formData.id ? "Edit Team Member" : "Add New Coach / Specialist"}
+                {formData.id ? "Edit Staff Member" : "Add Staff Member"}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-1 rounded-lg text-secondary hover:text-white"
+                className="text-secondary hover:text-white"
               >
-                <span className="material-symbols-outlined text-xl">close</span>
+                <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleSaveMember} className="space-y-4 text-xs font-inter">
+            <form onSubmit={handleSaveMember} className="space-y-4 font-inter text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
-                    Full Name *
+                  <label className="block text-secondary mb-1 uppercase font-semibold">
+                    Full Name
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g. Teshome Bekele"
-                    className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
+                    placeholder="e.g. Teshome Abate"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
-                    Role Title *
+                  <label className="block text-secondary mb-1 uppercase font-semibold">
+                    Role / Job Title
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    placeholder="e.g. Head Strength Coach"
-                    className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
+                    placeholder="e.g. Master Athletics Coach"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
-                  Photo URL *
-                </label>
-                <input
-                  type="url"
-                  required
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
-                />
-              </div>
-
-              <div>
-                <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
-                  Specializations (Comma separated)
-                </label>
-                <input
-                  type="text"
-                  value={formData.specializations}
-                  onChange={(e) => setFormData({ ...formData, specializations: e.target.value })}
-                  placeholder="Olympic Lifting, Mobility, Hypertrophy"
-                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
+                  <label className="block text-secondary mb-1 uppercase font-semibold">
+                    Team Category
+                  </label>
+                  <select
+                    value={formData.category || "MANAGEMENT"}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
+                  >
+                    <option value="MANAGEMENT">Management Leadership (About Us Page)</option>
+                    <option value="TRAINER">Personal Trainer (Register Page Selection)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-secondary mb-1 uppercase font-semibold">
                     Experience Years
                   </label>
                   <input
                     type="number"
                     value={formData.experienceYears}
                     onChange={(e) => setFormData({ ...formData, experienceYears: e.target.value })}
-                    className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-secondary mb-1 uppercase font-semibold">
+                  Photo URL
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.imageUrl}
+                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
+                />
+              </div>
+
+              <div>
+                <label className="block text-secondary mb-1 uppercase font-semibold">
+                  Short Bio Summary
+                </label>
+                <textarea
+                  rows={3}
+                  required
+                  value={formData.bio}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
+                  placeholder="Summary of experience, credentials, and achievements..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-secondary mb-1 uppercase font-semibold">
+                  Specializations (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={formData.specializations}
+                  onChange={(e) => setFormData({ ...formData, specializations: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
+                  placeholder="e.g. Muscle Building, Mobility, Nutrition"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
+                  <label className="block text-secondary mb-1 uppercase font-semibold">
                     Phone
                   </label>
                   <input
                     type="text"
                     value={formData.phone || ""}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+251 911 000 000"
-                    className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
+                    placeholder="0911-415-862"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
+                  <label className="block text-secondary mb-1 uppercase font-semibold">
                     Email
                   </label>
                   <input

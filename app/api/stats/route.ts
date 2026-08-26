@@ -8,17 +8,17 @@ export async function GET() {
       pendingClients,
       activePrograms,
       totalTeam,
+      totalMemberships,
       upcomingEventsCount,
       featuredPopupEvent,
       totalBlogs,
-      unreadInquiries,
       recentClients,
-      recentInquiries,
     ] = await Promise.all([
       prisma.client.count(),
       prisma.client.count({ where: { status: "PENDING" } }),
       prisma.program.count({ where: { status: "ACTIVE" } }),
       prisma.teamMember.count({ where: { isActive: true } }),
+      prisma.membershipPlan.count({ where: { isActive: true } }),
       prisma.upcomingEvent.count({ where: { status: "UPCOMING" } }),
       prisma.upcomingEvent.findFirst({
         where: { isPopupFeatured: true },
@@ -33,14 +33,9 @@ export async function GET() {
         },
       }),
       prisma.blogPost.count({ where: { isPublished: true } }),
-      prisma.inquiry.count({ where: { status: "UNREAD" } }),
       prisma.client.findMany({
         take: 5,
         orderBy: { registeredAt: "desc" },
-      }),
-      prisma.inquiry.findMany({
-        take: 5,
-        orderBy: { createdAt: "desc" },
       }),
     ]);
 
@@ -50,18 +45,17 @@ export async function GET() {
         pendingClients,
         activePrograms,
         totalTeam,
+        totalMemberships,
         upcomingEventsCount,
         totalBlogs,
-        unreadInquiries,
       },
       featuredPopupEvent,
       recentClients,
-      recentInquiries,
     });
-  } catch (error) {
-    console.error("Stats API error:", error);
+  } catch (error: any) {
+    console.error("Failed to fetch dashboard stats:", error);
     return NextResponse.json(
-      { error: "Failed to fetch stats" },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }

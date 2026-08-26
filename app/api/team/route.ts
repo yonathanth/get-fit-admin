@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { name, role, bio, fullBio, imageUrl, specializations, certifications, experienceYears, experienceText, email, phone, instagram, facebook, linkedin, tiktok, displayOrder, isActive } = body;
+    const { name, role, category = "MANAGEMENT", bio, fullBio, imageUrl, specializations, certifications, experienceYears, experienceText, email, phone, instagram, facebook, linkedin, tiktok, displayOrder, isActive } = body;
 
     if (!name || !role || !bio || !imageUrl) {
       return NextResponse.json({ error: "Name, role, bio, and image are required" }, { status: 400 });
@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
         slug: body.slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""),
         name,
         role,
+        category: category || "MANAGEMENT",
         bio,
         fullBio: fullBio || bio,
         imageUrl,

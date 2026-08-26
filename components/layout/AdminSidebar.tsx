@@ -15,12 +15,11 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const navLinks = [
     { name: "Dashboard", href: "/", icon: "dashboard" },
     { name: "Registered Clients", href: "/clients", icon: "group" },
-    { name: "Programs CMS", href: "/programs", icon: "fitness_center" },
+    { name: "Programs & Plans", href: "/programs", icon: "fitness_center" },
     { name: "Team Members", href: "/team", icon: "badge" },
     { name: "Upcoming Events", href: "/events", icon: "event" },
     { name: "Community & Past", href: "/community", icon: "auto_awesome" },
     { name: "Blog Posts", href: "/blog", icon: "article" },
-    { name: "Inquiries", href: "/inquiries", icon: "mail" },
     { name: "Gym Settings", href: "/settings", icon: "settings" },
   ];
 
@@ -97,7 +96,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         {/* Bottom Actions: Live Website Preview + Sign Out */}
         <div className="p-4 border-t border-white/5 space-y-2">
           <a
-            href="http://localhost:3000"
+            href="https://getfitgymandspa.com"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-inter text-xs font-semibold text-zinc-300 hover:text-primary hover:bg-primary/10 border border-transparent hover:border-primary/20 transition-all duration-200"

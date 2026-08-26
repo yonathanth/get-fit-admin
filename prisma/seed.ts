@@ -21,7 +21,7 @@ async function main() {
   });
   console.log("Created admin user:", admin.username);
 
-  // 2. Seed Programs
+  // 2. Seed Programs (Classes)
   const programsData = [
     {
       name: "HIIT & Metabolic Training",
@@ -32,7 +32,7 @@ async function main() {
       capacity: 25,
       instructor: "Abeyet Naqachew",
       intensity: "Intermediate - High",
-      price: "Included in Membership",
+      price: null,
       displayOrder: 1,
       features: ["Metabolic heart rate intervals", "Sports science level-based grouping", "Full-body fat oxidation"]
     },
@@ -45,7 +45,7 @@ async function main() {
       capacity: 25,
       instructor: "Teshome Abate",
       intensity: "Intermediate",
-      price: "Included in Membership",
+      price: null,
       displayOrder: 2,
       features: ["Martial arts striking combinations", "High-tempo choreography", "Core agility and rhythm"]
     },
@@ -58,7 +58,7 @@ async function main() {
       capacity: 20,
       instructor: "Tewodros Bogale",
       intensity: "All Levels",
-      price: "Included in Membership",
+      price: null,
       displayOrder: 3,
       features: ["Resistance band body sculpting", "Posture alignment", "Joint-friendly calorie burn"]
     },
@@ -71,7 +71,7 @@ async function main() {
       capacity: 25,
       instructor: "Gebreal Tessema Admas",
       intensity: "Intermediate",
-      price: "Included in Membership",
+      price: null,
       displayOrder: 4,
       features: ["1,050 m² Life Fitness arena circuit", "Station-based workouts", "Aerobic capacity boosting"]
     },
@@ -84,7 +84,7 @@ async function main() {
       capacity: 20,
       instructor: "Gebreal Tessema Admas",
       intensity: "Low - Moderate",
-      price: "Included in Membership",
+      price: null,
       displayOrder: 5,
       features: ["Joint mobility & flexibility", "Balance and posture restoration", "Supervised medical fitness guidance"]
     },
@@ -97,7 +97,7 @@ async function main() {
       capacity: 30,
       instructor: "Tewodros Bogale",
       intensity: "All Levels",
-      price: "Included in Membership",
+      price: null,
       displayOrder: 6,
       features: ["Traditional and global rhythms", "High-energy community workout", "Saturday Get Fit Combo special"]
     }
@@ -120,12 +120,14 @@ async function main() {
   }
   console.log("Seeded programs.");
 
-  // 3. Seed Team Members (with unique slugs)
+  // 3. Seed Team Members (Management + Trainers)
   const teamData = [
+    // MANAGEMENT TEAM
     {
       slug: "teshome-abate",
       name: "Teshome Abate",
       role: "Master Athletics Coach & Martial Arts Specialist",
+      category: "MANAGEMENT",
       bio: "Dual Master's in Exercise Physiology & Athletics Coaching, 7th Dan Black Belt in Wushu, and 22+ years elite athletic instruction.",
       fullBio: "Teshome is a highly distinguished fitness expert with dual Master’s degrees in Exercise Physiology and Athletics Coaching, complemented by over 22 years of elite martial arts club management. His extensive career spans high-level corporate wellness programs at international institutions (ILRI, ECA) and specialized athletic performance coaching.",
       imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=800&h=800&fit=crop&q=80",
@@ -145,6 +147,7 @@ async function main() {
       slug: "gebreal-tessema-admas",
       name: "Gebreal Tessema Admas",
       role: "Operational Manager & Medical Fitness Coach",
+      category: "MANAGEMENT",
       bio: "B.Ed. in Physical Education & M.A. in Leadership with 11 years coaching experience in medical fitness and exercise programming.",
       fullBio: "Gebreal bridges organizational leadership with targeted medical exercise programming. Holding a B.Ed. in Health & Physical Education and an M.A. in Educational Leadership and Management, he brings 11 years of experience in program development, process improvement, and holistic health instruction.",
       imageUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&h=800&fit=crop&q=80",
@@ -164,6 +167,7 @@ async function main() {
       slug: "abeyet-naqachew",
       name: "Abeyet Naqachew",
       role: "Senior Coach & Combat Sports Specialist",
+      category: "MANAGEMENT",
       bio: "20+ years of hands-on coaching leadership, functional movement, weightlifting program design, and 6th Dan Black Belt in Wushu.",
       fullBio: "Abeyet brings over two decades of hands-on coaching leadership and athletic management to our training floor. Holding a Bachelor’s Degree in Public Management alongside advanced certifications in Cardiovascular, Functional Training, and Sports Rehabilitation, he bridges operational leadership with practical physical development. He has founded and led premier weightlifting clubs and holds a prestigious 6th Dan Black Belt in Wushu.",
       imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=800&fit=crop&q=80",
@@ -183,6 +187,7 @@ async function main() {
       slug: "tewodros-bogale",
       name: "Tewodros Bogale",
       role: "Exercise Physiologist & Head Gym Instructor",
+      category: "MANAGEMENT",
       bio: "M.Sc. in Exercise Physiology and B.Sc. in Sport Science with 13+ years coaching experience in top commercial fitness environments.",
       fullBio: "Tewodros combines rigorous academic science with more than 13 years of practical coaching experience in top-tier commercial fitness environments. Holding a B.Sc. in Sport Science and an M.Sc. in Exercise Physiology, he specializes in translating complex physiological principles into safe, scalable, and highly effective workout routines for diverse populations.",
       imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&h=800&fit=crop&q=80",
@@ -202,6 +207,7 @@ async function main() {
       slug: "dr-tobel-daniel-tessema",
       name: "Dr. Tobel Daniel Tessema",
       role: "Medical Doctor & Community Nutrition Specialist",
+      category: "MANAGEMENT",
       bio: "Medical Doctor (M.D.) & M.Sc. candidate in Community Nutrition & Dietetics applying clinical medical insights to lifestyle wellness.",
       fullBio: "Dr. Tobel combines clinical medical knowledge with specialized nutritional science to drive health promotion and long-term wellness. Holding a Doctor of Medicine from the University of Gondar and pursuing an M.Sc. in Community Nutrition and Dietetics at Addis Ababa University, he applies medical insights to lifestyle and dietary optimization.",
       imageUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=800&h=800&fit=crop&q=80",
@@ -215,6 +221,110 @@ async function main() {
       facebook: "https://www.facebook.com/share/18TRbLvNPQ/?mibextid=wwXIfr",
       linkedin: "https://www.linkedin.com/in/getfit-gym-6538333b7",
       displayOrder: 5,
+      isActive: true
+    },
+
+    // TRAINERS
+    {
+      slug: "coach-abel-kebede",
+      name: "Coach Abel Kebede",
+      role: "Strength & Hypertrophy Coach",
+      category: "TRAINER",
+      bio: "Dedicated personal trainer focused on lifting mechanics, muscle development, and safe progressive overload.",
+      fullBio: "Coach Abel provides focused one-on-one training to help you build functional strength, lean mass, and joint resilience.",
+      imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&h=800&fit=crop&q=80",
+      specializations: ["Muscle Building", "Powerlifting", "Posture Alignment"],
+      certifications: ["Certified Personal Trainer (CPT)", "Strength & Conditioning Specialist"],
+      experienceYears: 6,
+      experienceText: "6+ Years Experience",
+      email: "getfitt26@gmail.com",
+      phone: "0911-415-862",
+      displayOrder: 1,
+      isActive: true
+    },
+    {
+      slug: "coach-sara-haile",
+      name: "Coach Sara Haile",
+      role: "Functional Fitness & Female Specialist",
+      category: "TRAINER",
+      bio: "Empowering members with balanced fitness, core strength, and sustainable training routines.",
+      fullBio: "Coach Sara specializes in tailored female fitness, body recomposition, and high-energy functional workouts.",
+      imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=800&fit=crop&q=80",
+      specializations: ["Body Recomposition", "Core Stability", "Cardio Conditioning"],
+      certifications: ["Functional Training Coach", "Sports Nutrition Certified"],
+      experienceYears: 5,
+      experienceText: "5+ Years Experience",
+      email: "getfitt26@gmail.com",
+      phone: "0911-415-862",
+      displayOrder: 2,
+      isActive: true
+    },
+    {
+      slug: "coach-daniel-bekele",
+      name: "Coach Daniel Bekele",
+      role: "HIIT & Fat Loss Conditioning",
+      category: "TRAINER",
+      bio: "High-energy coach driving fat loss, athletic stamina, and cardiovascular endurance.",
+      fullBio: "Coach Daniel combines interval circuits, athletic agility drills, and metabolic conditioning for maximum calorie burn.",
+      imageUrl: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&h=800&fit=crop&q=80",
+      specializations: ["Fat Loss", "Agility Drills", "Cardio Capacity"],
+      certifications: ["NASM Certified Personal Trainer", "HIIT & Circuit Specialist"],
+      experienceYears: 5,
+      experienceText: "5+ Years Experience",
+      email: "getfitt26@gmail.com",
+      phone: "0992 222 224",
+      displayOrder: 3,
+      isActive: true
+    },
+    {
+      slug: "coach-bethlehem-tadesse",
+      name: "Coach Bethlehem Tadesse",
+      role: "Mobility & Body Toning Coach",
+      category: "TRAINER",
+      bio: "Focused on posture alignment, mobility, and lean muscle definition.",
+      fullBio: "Coach Bethlehem delivers structured toning workouts paired with active recovery, mobility routines, and joint health protection.",
+      imageUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&h=800&fit=crop&q=80",
+      specializations: ["Joint Mobility", "Pilates & Core", "Toning Routines"],
+      certifications: ["Mobility & Movement Specialist", "Group Fitness Instructor"],
+      experienceYears: 4,
+      experienceText: "4+ Years Experience",
+      email: "getfitt26@gmail.com",
+      phone: "0911-415-862",
+      displayOrder: 4,
+      isActive: true
+    },
+    {
+      slug: "coach-yared-alemu",
+      name: "Coach Yared Alemu",
+      role: "Combat Sports & Boxing Coach",
+      category: "TRAINER",
+      bio: "Specializing in athletic striking mechanics, speed work, core conditioning, and defensive martial arts.",
+      fullBio: "Coach Yared coaches members in boxing pad work, cardiovascular kickboxing circuits, and athletic endurance.",
+      imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&h=800&fit=crop&q=80",
+      specializations: ["Boxing Drills", "Striking Speed", "Reflex Training"],
+      certifications: ["Combat Sports Certified Instructor", "Boxing Conditioning Coach"],
+      experienceYears: 6,
+      experienceText: "6+ Years Experience",
+      email: "getfitt26@gmail.com",
+      phone: "0992 222 224",
+      displayOrder: 5,
+      isActive: true
+    },
+    {
+      slug: "coach-rahel-mekonnen",
+      name: "Coach Rahel Mekonnen",
+      role: "Senior & Health Rehabilitation Coach",
+      category: "TRAINER",
+      bio: "Dedicated to posture alignment, gentle joint mobility, functional restoration, and medical exercise supervision.",
+      fullBio: "Coach Rahel specializes in low-impact functional movements tailored for longevity, bone density, and pain-free movement.",
+      imageUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=800&fit=crop&q=80",
+      specializations: ["Medical Fitness", "Joint Restoration", "Postural Symmetry"],
+      certifications: ["Corrective Exercise Specialist", "Senior Fitness Certified"],
+      experienceYears: 7,
+      experienceText: "7+ Years Experience",
+      email: "getfitt26@gmail.com",
+      phone: "0911-415-862",
+      displayOrder: 6,
       isActive: true
     }
   ];
@@ -230,9 +340,200 @@ async function main() {
       create: coach
     });
   }
-  console.log("Seeded team members (only the 5 real coaches exist).");
+  console.log("Seeded team members (Management + Trainers).");
 
-  // 4. Seed Upcoming Events (and mark one for the 10-second popup)
+  // 4. Seed Membership Plans (Exact Official Price List)
+  const membershipPlansData = [
+    // REGULAR ANY TIME
+    {
+      slug: "gym-only-regular-single",
+      name: "Gym Only (Single)",
+      category: "REGULAR",
+      tier: "SINGLE",
+      subtitle: "Full 1,050 m² training floor & level-based group classes",
+      price1Month: "19,500 ETB",
+      price3Months: "32,800 ETB",
+      price6Months: "49,140 ETB",
+      price1Year: "70,200 ETB",
+      isPopular: false,
+      features: [
+        "1,050 m² Life Fitness equipment access",
+        "14 level-based group fitness classes",
+        "Standard locker room & shower amenities",
+        "Detailed initial fitness assessment",
+        "Flexible 1, 3, 6 & 12 month pre-opening rates"
+      ],
+      displayOrder: 1,
+      isActive: true
+    },
+    {
+      slug: "gym-spa-regular-single",
+      name: "Gym With Spa (Single)",
+      category: "REGULAR",
+      tier: "SINGLE",
+      subtitle: "All-inclusive training floor, group classes & luxury recovery center",
+      price1Month: "27,495 ETB",
+      price3Months: "38,844 ETB",
+      price6Months: "54,600 ETB",
+      price1Year: "77,200 ETB",
+      isPopular: true,
+      features: [
+        "Full 1,050 m² Life Fitness arena access",
+        "Unlimited 750 m² Spa, steam & sauna",
+        "Moroccan bath & massage therapy access",
+        "14 level-based group fitness activities",
+        "Detailed body composition scan & tracking",
+        "Nutritionist & medical doctor consultation",
+        "Priority executive locker & towel service"
+      ],
+      displayOrder: 2,
+      isActive: true
+    },
+    {
+      slug: "gym-spa-regular-couple",
+      name: "Gym With Spa (Couple - 10% Off)",
+      category: "REGULAR",
+      tier: "COUPLE",
+      subtitle: "Dual all-inclusive Gym & Spa membership with couples discount",
+      price1Month: "49,530 ETB",
+      price3Months: "69,920 ETB",
+      price6Months: "98,280 ETB",
+      price1Year: "138,996 ETB",
+      isPopular: false,
+      features: [
+        "2-person all-inclusive Gym & Spa pass",
+        "1,050 m² training area + 750 m² wellness center",
+        "Unlimited steam, sauna & Moroccan bath",
+        "14 level-based group classes for both",
+        "Dual body composition & health evaluations",
+        "Personalized nutrition strategies",
+        "Restaurant & beauty salon discounts"
+      ],
+      displayOrder: 3,
+      isActive: true
+    },
+    {
+      slug: "gym-only-regular-couple",
+      name: "Gym Only (Couple - 10% Off)",
+      category: "REGULAR",
+      tier: "COUPLE",
+      subtitle: "Dual training floor membership with 10% couples discount",
+      price1Month: "35,100 ETB",
+      price3Months: "58,960 ETB",
+      price6Months: "88,452 ETB",
+      price1Year: "126,360 ETB",
+      isPopular: false,
+      features: [
+        "2-person training floor access",
+        "14 level-based group fitness classes",
+        "Dual body composition assessments",
+        "Standard locker room & shower amenities"
+      ],
+      displayOrder: 4,
+      isActive: true
+    },
+
+    // HAPPY HOUR (20% OFF)
+    {
+      slug: "gym-only-happy-hour-single",
+      name: "Gym Only (Happy Hour Single)",
+      category: "HAPPY_HOUR",
+      tier: "SINGLE",
+      subtitle: "Off-peak training floor access with 20% discount",
+      price1Month: "15,600 ETB",
+      price3Months: "26,208 ETB",
+      price6Months: "39,312 ETB",
+      price1Year: "56,160 ETB",
+      isPopular: false,
+      features: [
+        "Off-peak 1,050 m² Life Fitness area access",
+        "14 level-based group fitness classes",
+        "Standard locker room & shower amenities",
+        "Baseline fitness level assessment",
+        "Pre-opening discounts across all terms"
+      ],
+      displayOrder: 5,
+      isActive: true
+    },
+    {
+      slug: "gym-spa-happy-hour-single",
+      name: "Gym With Spa (Happy Hour Single)",
+      category: "HAPPY_HOUR",
+      tier: "SINGLE",
+      subtitle: "Off-peak Gym & Spa luxury recovery with 20% savings",
+      price1Month: "22,000 ETB",
+      price3Months: "30,992 ETB",
+      price6Months: "43,680 ETB",
+      price1Year: "61,776 ETB",
+      isPopular: true,
+      features: [
+        "Off-peak 1,050 m² Life Fitness arena access",
+        "750 m² Spa, steam, sauna & Moroccan bath",
+        "Detailed body composition & health tracking",
+        "14 level-based group classes",
+        "Nutritionist consultation session",
+        "Priority executive locker & shower access"
+      ],
+      displayOrder: 6,
+      isActive: true
+    },
+    {
+      slug: "gym-spa-happy-hour-couple",
+      name: "Gym With Spa (Couple Happy Hour)",
+      category: "HAPPY_HOUR",
+      tier: "COUPLE",
+      subtitle: "Off-peak dual Gym & Spa package with combined discounts",
+      price1Month: "39,624 ETB",
+      price3Months: "55,960 ETB",
+      price6Months: "78,624 ETB",
+      price1Year: "111,192 ETB",
+      isPopular: false,
+      features: [
+        "2-person off-peak Gym & Spa all-inclusive",
+        "Unlimited steam, sauna & Moroccan bath",
+        "Dual body composition assessments",
+        "14 level-based group classes for both",
+        "Nutrition consultation & dietary review",
+        "Restaurant & beauty salon discounts"
+      ],
+      displayOrder: 7,
+      isActive: true
+    },
+    {
+      slug: "gym-only-happy-hour-couple",
+      name: "Gym Only (Couple Happy Hour)",
+      category: "HAPPY_HOUR",
+      tier: "COUPLE",
+      subtitle: "Off-peak dual training floor pass with combined savings",
+      price1Month: "28,000 ETB",
+      price3Months: "47,174 ETB",
+      price6Months: "70,700 ETB",
+      price1Year: "101,000 ETB",
+      isPopular: false,
+      features: [
+        "2-person off-peak training arena pass",
+        "14 level-based group classes for both",
+        "Standard locker room & shower amenities"
+      ],
+      displayOrder: 8,
+      isActive: true
+    }
+  ];
+
+  await prisma.membershipPlan.deleteMany({
+    where: { slug: { notIn: membershipPlansData.map(m => m.slug) } }
+  });
+
+  for (const plan of membershipPlansData) {
+    await prisma.membershipPlan.upsert({
+      where: { slug: plan.slug },
+      update: plan,
+      create: plan
+    });
+  }
+  console.log("Seeded membership plans.");
+
+  // 5. Seed Upcoming Events (and mark one for the 10-second popup)
   const eventsData = [
     {
       slug: "youth-sports-day",
@@ -349,7 +650,7 @@ async function main() {
   }
   console.log("Seeded events.");
 
-  // 5. Seed Past Showcases
+  // 6. Seed Past Showcases
   const showcaseData = [
     {
       slug: "youth-sports-day",
@@ -449,7 +750,7 @@ async function main() {
   }
   console.log("Seeded community showcases.");
 
-  // 6. Seed Blog Posts
+  // 7. Seed Blog Posts
   const blogData = [
     {
       slug: "essential-strength-training-techniques",
@@ -501,7 +802,7 @@ async function main() {
   }
   console.log("Seeded blog posts.");
 
-  // 7. Seed Gym Settings
+  // 8. Seed Gym Settings
   const settingsData = [
     { key: "gym_name", value: "Get Fit Gym", description: "Official gym brand name" },
     { key: "video_tour_url", value: "https://www.youtube.com/embed/dQw4w9WgXcQ", description: "Virtual facility video tour embed URL" },
@@ -509,8 +810,13 @@ async function main() {
     { key: "phone_secondary", value: "0992 222 224", description: "Secondary phone" },
     { key: "email_address", value: "getfitt26@gmail.com", description: "Contact email" },
     { key: "location_address", value: "CMC Michael, Addis Ababa, Ethiopia", description: "Gym facility street address" },
+    { key: "operating_hours", value: "5:00 AM - 10:00 PM / Monday - Sunday", description: "Operating hours" },
     { key: "operating_hours_weekday", value: "5:00 AM - 10:00 PM / Monday - Sunday", description: "Weekday operating hours" },
-    { key: "operating_hours_weekend", value: "5:00 AM - 10:00 PM / Monday - Sunday", description: "Weekend operating hours" }
+    { key: "operating_hours_weekend", value: "5:00 AM - 10:00 PM / Monday - Sunday", description: "Weekend operating hours" },
+    { key: "tiktok_url", value: "https://www.tiktok.com/@getfit.gym?_r=1&_d=emlg250de76mf3&sec_uid=MS4wLjABAAAAvBlVwdgWlgwuZAR7zeqbrktbvzDdN_AdTyf8dzhRc5YZhlAMUVvpQgMVS28ngCI2&share_author_id=7617383060232930322&sharer_language=en&source=h5_m&u_code=f2df05jabaidcj&item_author_type=1&utm_source=whatsapp&tt_from=whatsapp&enable_checksum=1&utm_medium=ios&share_link_id=862AD9C8-C905-4DF5-AC6A-089F06537298&user_id=7617383060232930322&sec_user_id=MS4wLjABAAAAvBlVwdgWlgwuZAR7zeqbrktbvzDdN_AdTyf8dzhRc5YZhlAMUVvpQgMVS28ngCI2&social_share_type=5&ug_btm=b8727,b0&utm_campaign=client_share&share_app_id=1233", description: "Official TikTok channel" },
+    { key: "linkedin_url", value: "https://www.linkedin.com/in/getfit-gym-6538333b7?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", description: "Official LinkedIn profile" },
+    { key: "facebook_url", value: "https://www.facebook.com/share/18TRbLvNPQ/?mibextid=wwXIfr", description: "Official Facebook page" },
+    { key: "youtube_url", value: "https://youtube.com/@getfit-gym?si=Y5pWSp_Nz3bveXRo", description: "Official YouTube channel" }
   ];
 
   for (const s of settingsData) {

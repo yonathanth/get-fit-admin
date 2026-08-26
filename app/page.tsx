@@ -37,7 +37,7 @@ export default function DashboardPage() {
     );
   }
 
-  const { stats, featuredPopupEvent, recentClients = [], recentInquiries = [] } = data || {};
+  const { stats, featuredPopupEvent, recentClients = [] } = data || {};
 
   const statCards = [
     {
@@ -50,14 +50,14 @@ export default function DashboardPage() {
     {
       title: "Active Programs",
       value: stats?.activePrograms || 0,
-      subValue: "Curated Fitness Schedules",
+      subValue: "Curated Group Classes",
       icon: "fitness_center",
       href: "/programs",
     },
     {
-      title: "Coaching Staff",
+      title: "Staff",
       value: stats?.totalTeam || 0,
-      subValue: "Certified Specialists",
+      subValue: "Management & Trainers",
       icon: "badge",
       href: "/team",
     },
@@ -76,11 +76,11 @@ export default function DashboardPage() {
       href: "/blog",
     },
     {
-      title: "Contact Inquiries",
-      value: stats?.unreadInquiries || 0,
-      subValue: "Unread Website Submissions",
-      icon: "mail",
-      href: "/inquiries",
+      title: "Membership Plans",
+      value: stats?.totalMemberships || 8,
+      subValue: "Regular & Happy Hour Tiers",
+      icon: "card_membership",
+      href: "/programs",
     },
   ];
 
@@ -144,59 +144,50 @@ export default function DashboardPage() {
                 arrow_outward
               </span>
             </div>
-            <p className="text-xs font-inter text-secondary mt-1.5">
+            <p className="text-xs font-inter text-secondary mt-2">
               {card.subValue}
             </p>
           </Link>
         ))}
       </div>
 
-      {/* Active Popup Event Controller Card (Clean & Minimalist, No Sparkle Tag) */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-surface border border-primary/30 relative">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <span className="text-xs font-inter font-bold text-primary tracking-widest uppercase block">
-              Active Popup Modal Event
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-impact text-white uppercase tracking-tight italic">
-              {featuredPopupEvent?.title || "No event currently selected for popup"}
-            </h3>
-            {featuredPopupEvent && (
-              <div className="flex flex-wrap items-center gap-4 text-xs font-inter text-secondary pt-1">
-                <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-primary text-sm">schedule</span>
-                  <span>{featuredPopupEvent.timeString}</span>
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-primary text-sm">location_on</span>
-                  <span>{featuredPopupEvent.location}</span>
-                </span>
-                <span className="text-primary font-semibold">
-                  {featuredPopupEvent.remainingSpots} Spots Remaining
-                </span>
+      {/* Featured Popup Event Control */}
+      {featuredPopupEvent && (
+        <div className="p-6 rounded-2xl bg-[#141414] border border-primary/20 relative overflow-hidden">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-inter font-bold text-primary uppercase tracking-wide">
+                <span className="material-symbols-outlined text-xs">auto_awesome</span>
+                <span>Active 10-Sec Popup Banner</span>
               </div>
-            )}
+              <h3 className="text-xl sm:text-2xl font-impact text-white uppercase tracking-tight">
+                {featuredPopupEvent.title}
+              </h3>
+              <p className="text-xs font-inter text-secondary">
+                {featuredPopupEvent.timeString} • {featuredPopupEvent.location} • {featuredPopupEvent.remainingSpots} Spots Remaining
+              </p>
+            </div>
+
+            <Link
+              href="/events"
+              className="px-4 py-2 rounded-xl bg-surface border border-white/10 hover:border-primary/40 text-xs font-inter font-semibold text-white transition-colors"
+            >
+              Manage Events
+            </Link>
           </div>
-
-          <Link
-            href="/events"
-            className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-primary hover:text-black border border-white/10 hover:border-primary text-white font-impact text-base tracking-wider uppercase transition-all cursor-pointer"
-          >
-            Change Popup Event
-          </Link>
         </div>
-      </div>
+      )}
 
-      {/* Two Columns: Recent Registrations & Inquiries */}
+      {/* Bottom Grid: Recent Clients and Quick Shortcuts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Registrations */}
+        {/* Recent Client Registrations */}
         <div className="p-6 rounded-2xl bg-surface border border-white/5">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h3 className="text-xl font-impact text-white uppercase tracking-tight">
-                Recent Registrations
+                Recent Clients
               </h3>
-              <p className="text-xs font-inter text-secondary">Latest clients registered on website</p>
+              <p className="text-xs font-inter text-secondary">Latest registrations awaiting confirmation</p>
             </div>
             <Link href="/clients" className="text-xs font-inter text-primary hover:underline font-semibold">
               View All
@@ -240,50 +231,78 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Recent Inquiries */}
+        {/* Quick Management Shortcuts */}
         <div className="p-6 rounded-2xl bg-surface border border-white/5">
           <div className="flex items-center justify-between mb-5">
             <div>
               <h3 className="text-xl font-impact text-white uppercase tracking-tight">
-                Inbound Inquiries
+                Quick CMS Actions
               </h3>
-              <p className="text-xs font-inter text-secondary">Messages submitted via contact page</p>
+              <p className="text-xs font-inter text-secondary">Instant shortcuts to website management</p>
             </div>
-            <Link href="/inquiries" className="text-xs font-inter text-primary hover:underline font-semibold">
-              View All
-            </Link>
           </div>
 
-          {recentInquiries.length === 0 ? (
-            <p className="text-xs font-inter text-secondary text-center py-6">No contact messages recorded yet.</p>
-          ) : (
-            <div className="space-y-2.5">
-              {recentInquiries.map((inq: any) => (
-                <div
-                  key={inq.id}
-                  className="p-3.5 rounded-xl bg-[#0a0a0a] border border-white/5 flex flex-col gap-1 hover:border-primary/20 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="text-xs font-inter font-semibold text-white truncate">
-                      {inq.name}
-                    </div>
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-inter font-bold uppercase ${
-                        inq.status === "UNREAD"
-                          ? "bg-rose-500/10 text-rose-400 font-bold"
-                          : "text-secondary"
-                      }`}
-                    >
-                      {inq.status}
-                    </span>
-                  </div>
-                  <p className="text-xs font-inter text-secondary line-clamp-1">
-                    {inq.subject ? `${inq.subject} - ` : ""}{inq.message}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              href="/programs"
+              className="p-4 rounded-xl bg-[#0a0a0a] border border-white/5 hover:border-primary/30 transition-all group block"
+            >
+              <span className="material-symbols-outlined text-primary text-2xl mb-1.5 block">
+                card_membership
+              </span>
+              <div className="text-xs font-inter font-bold text-white uppercase">
+                Membership Pricing
+              </div>
+              <p className="text-[11px] font-inter text-secondary mt-0.5">
+                Manage 8 pricing tiers
+              </p>
+            </Link>
+
+            <Link
+              href="/team"
+              className="p-4 rounded-xl bg-[#0a0a0a] border border-white/5 hover:border-primary/30 transition-all group block"
+            >
+              <span className="material-symbols-outlined text-primary text-2xl mb-1.5 block">
+                badge
+              </span>
+              <div className="text-xs font-inter font-bold text-white uppercase">
+                Staff & Trainers
+              </div>
+              <p className="text-[11px] font-inter text-secondary mt-0.5">
+                Management & personal trainers
+              </p>
+            </Link>
+
+            <Link
+              href="/events"
+              className="p-4 rounded-xl bg-[#0a0a0a] border border-white/5 hover:border-primary/30 transition-all group block"
+            >
+              <span className="material-symbols-outlined text-primary text-2xl mb-1.5 block">
+                event
+              </span>
+              <div className="text-xs font-inter font-bold text-white uppercase">
+                Popup & Events
+              </div>
+              <p className="text-[11px] font-inter text-secondary mt-0.5">
+                Set active featured event
+              </p>
+            </Link>
+
+            <Link
+              href="/settings"
+              className="p-4 rounded-xl bg-[#0a0a0a] border border-white/5 hover:border-primary/30 transition-all group block"
+            >
+              <span className="material-symbols-outlined text-primary text-2xl mb-1.5 block">
+                settings
+              </span>
+              <div className="text-xs font-inter font-bold text-white uppercase">
+                Gym Settings
+              </div>
+              <p className="text-[11px] font-inter text-secondary mt-0.5">
+                Live phones, email, & socials
+              </p>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

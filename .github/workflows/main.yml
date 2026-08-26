@@ -1,0 +1,47 @@
+name: Deploy Get Fit Admin
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+
+          script: |
+            set -e
+
+            echo "🚀 Starting admin deployment..."
+
+            cd /home/deploy/apps/getfit-admin
+
+            echo "📥 Pulling latest code..."
+            git fetch origin master
+            git reset --hard origin/master
+
+            echo "📦 Installing dependencies..."
+            npm install --force
+
+            echo "🏗️ Building Next.js..."
+            npm run build
+
+            echo "🔄 Starting/reloading PM2..."
+
+            if pm2 describe getfit-admin > /dev/null 2>&1; then
+              pm2 reload getfit-admin --update-env
+            else
+              pm2 start npm --name getfit-admin -- start -- -p 3001
+              pm2 save
+            fi
+
+            echo "✅ Admin deployment completed!"

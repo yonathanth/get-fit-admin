@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUpload from "@/components/ui/ImageUpload";
 
 export default function ProgramsPage() {
   const [activeTab, setActiveTab] = useState<"classes" | "memberships">("classes");
@@ -521,15 +522,9 @@ export default function ProgramsPage() {
 
               <div>
                 <label className="block text-secondary mb-1 uppercase font-semibold">
-                  Class Image URL
+                  Class Image
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={classForm.imageUrl}
-                  onChange={(e) => setClassForm({ ...classForm, imageUrl: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
-                />
+                <ImageUpload required value={classForm.imageUrl} onChange={(url) => setClassForm({ ...classForm, imageUrl: url })} hint="Resized automatically" />
               </div>
 
               <div>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import GalleryUpload from "@/components/ui/GalleryUpload";
+import ImageUpload from "@/components/ui/ImageUpload";
 
 export default function CommunityPage() {
   const [showcases, setShowcases] = useState<any[]>([]);
@@ -256,16 +258,9 @@ export default function CommunityPage() {
 
               <div>
                 <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
-                  Cover Photo URL *
+                  Cover Photo *
                 </label>
-                <input
-                  type="url"
-                  required
-                  value={formData.coverImageUrl}
-                  onChange={(e) => setFormData({ ...formData, coverImageUrl: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
-                />
+                <ImageUpload required value={formData.coverImageUrl} onChange={(url) => setFormData({ ...formData, coverImageUrl: url })} hint="Wide photo · resized automatically" />
               </div>
 
               <div>
@@ -324,15 +319,9 @@ export default function CommunityPage() {
 
               <div>
                 <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
-                  Gallery Photo URLs (One URL per line)
+                  Gallery Photos
                 </label>
-                <textarea
-                  rows={3}
-                  value={formData.galleryUrls || ""}
-                  onChange={(e) => setFormData({ ...formData, galleryUrls: e.target.value })}
-                  placeholder="https://images.unsplash.com/photo-1&#10;https://images.unsplash.com/photo-2"
-                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary resize-none font-mono"
-                />
+                <GalleryUpload value={formData.galleryUrls || ""} onChange={(v) => setFormData({ ...formData, galleryUrls: v })} />
               </div>
 
               <div>

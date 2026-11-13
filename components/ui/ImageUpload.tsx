@@ -1,23 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-
-const MAX_EDGE = 1600;
-const QUALITY = 0.82;
-
-/** Shrinks a photo in the browser (longest edge 1600px, WebP) so uploads stay small. */
-async function compress(file: File): Promise<Blob> {
-  if (file.type === "image/gif") return file; // keep animation
-  const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bitmap.width * scale);
-  canvas.height = Math.round(bitmap.height * scale);
-  canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  bitmap.close();
-  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", QUALITY));
-  return blob && blob.size < file.size ? blob : file;
-}
+import { uploadImage } from "@/lib/upload";
 
 interface ImageUploadProps {
   value: string;
@@ -25,9 +9,11 @@ interface ImageUploadProps {
   /** Shown when no image is chosen, e.g. the linked event's banner. */
   fallbackPreview?: string;
   hint?: string;
+  /** Block form submit until an image is set. */
+  required?: boolean;
 }
 
-export default function ImageUpload({ value, onChange, fallbackPreview, hint }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, fallbackPreview, hint, required }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -36,20 +22,10 @@ export default function ImageUpload({ value, onChange, fallbackPreview, hint }: 
 
   const upload = async (file?: File | null) => {
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Please choose an image file");
-      return;
-    }
     setError("");
     setUploading(true);
     try {
-      const blob = await compress(file);
-      const body = new FormData();
-      body.append("file", blob, file.name.replace(/\.[^.]+$/, "") + (blob.type === "image/webp" ? ".webp" : ""));
-      const res = await fetch("/api/uploads", { method: "POST", body });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || "Upload failed");
-      onChange(data.url);
+      onChange(await uploadImage(file));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed");
     } finally {
@@ -119,6 +95,18 @@ export default function ImageUpload({ value, onChange, fallbackPreview, hint }: 
           onChange={(e) => onChange(e.target.value)}
           placeholder="https://… or /images/hero/dsc00690.webp"
           className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
+        />
+      )}
+      {required && (
+        <input
+          tabIndex={-1}
+          aria-hidden
+          required
+          value={value}
+          onChange={() => {}}
+          onInvalid={(e) => (e.target as HTMLInputElement).setCustomValidity("Please add an image")}
+          onInput={(e) => (e.target as HTMLInputElement).setCustomValidity("")}
+          className="sr-only"
         />
       )}
       {error && <p className="text-red-400 text-[11px]">{error}</p>}

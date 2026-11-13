@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import GalleryUpload from "@/components/ui/GalleryUpload";
+import ImageUpload from "@/components/ui/ImageUpload";
 
 /** Converts the form's text areas to the arrays stored in the database. */
 function toEventPayload(form: Record<string, unknown>) {
@@ -339,16 +341,9 @@ export default function EventsPage() {
 
               <div>
                 <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
-                  Banner Image URL *
+                  Banner Image *
                 </label>
-                <input
-                  type="url"
-                  required
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
-                />
+                <ImageUpload required value={formData.imageUrl} onChange={(url) => setFormData({ ...formData, imageUrl: url })} hint="Wide photo · resized automatically" />
               </div>
 
               <div>
@@ -380,15 +375,9 @@ export default function EventsPage() {
 
               <div>
                 <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
-                  Gallery image URLs <span className="normal-case tracking-normal text-white/40">(optional, one per line)</span>
+                  Gallery photos <span className="normal-case tracking-normal text-white/40">(optional)</span>
                 </label>
-                <textarea
-                  rows={3}
-                  value={formData.galleryText ?? ""}
-                  onChange={(e) => setFormData({ ...formData, galleryText: e.target.value })}
-                  placeholder="https://..."
-                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary resize-y font-mono text-[11px]"
-                />
+                <GalleryUpload value={formData.galleryText ?? ""} onChange={(v) => setFormData({ ...formData, galleryText: v })} />
               </div>
 
               <div>

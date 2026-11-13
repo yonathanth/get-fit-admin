@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUpload from "@/components/ui/ImageUpload";
 
 export default function BlogAdminPage() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -297,16 +298,9 @@ export default function BlogAdminPage() {
 
               <div>
                 <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
-                  Cover Image URL *
+                  Cover Image *
                 </label>
-                <input
-                  type="url"
-                  required
-                  value={formData.coverImageUrl}
-                  onChange={(e) => setFormData({ ...formData, coverImageUrl: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
-                />
+                <ImageUpload required value={formData.coverImageUrl} onChange={(url) => setFormData({ ...formData, coverImageUrl: url })} hint="Wide photo · resized automatically" />
               </div>
 
               <div>

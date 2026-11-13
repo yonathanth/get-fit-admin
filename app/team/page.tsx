@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUpload from "@/components/ui/ImageUpload";
 
 export default function TeamPage() {
   const [team, setTeam] = useState<any[]>([]);
@@ -347,15 +348,9 @@ export default function TeamPage() {
 
               <div>
                 <label className="block text-secondary mb-1 uppercase font-semibold">
-                  Photo URL
+                  Photo
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:border-primary"
-                />
+                <ImageUpload required value={formData.imageUrl} onChange={(url) => setFormData({ ...formData, imageUrl: url })} hint="Portrait photo · resized automatically" />
               </div>
 
               <div>

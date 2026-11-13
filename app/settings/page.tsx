@@ -58,10 +58,10 @@ const GROUPS: { title: string; icon: string; fields: Field[] }[] = [
       },
       {
         key: "popup_delay_seconds",
-        label: "Event popup delay (seconds)",
+        label: "Website popup delay (seconds)",
         type: "number",
         placeholder: "10",
-        help: "How long after a visitor arrives the featured-event popup appears. Choose the event under Events → Feature in popup.",
+        help: "How long after a visitor arrives the website popup appears. Manage popups under Website Popups.",
       },
     ],
   },

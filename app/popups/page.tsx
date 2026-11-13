@@ -75,6 +75,26 @@ export default function PopupsPage() {
   const [form, setForm] = useState<Popup>(EMPTY);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [delay, setDelay] = useState("10");
+  const [delayState, setDelayState] = useState<"idle" | "saving" | "saved">("idle");
+
+  const saveDelay = async () => {
+    const n = Math.max(0, Math.round(Number(delay) || 0));
+    setDelay(String(n));
+    setDelayState("saving");
+    try {
+      await fetch("/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ settings: { popup_delay_seconds: String(n) } }),
+      });
+      setDelayState("saved");
+      setTimeout(() => setDelayState("idle"), 1800);
+    } catch (e) {
+      console.error(e);
+      setDelayState("idle");
+    }
+  };
 
   const fetchPopups = async () => {
     try {
@@ -94,6 +114,10 @@ export default function PopupsPage() {
     fetch("/api/events")
       .then((r) => r.json())
       .then((d) => setEvents(d.events || []))
+      .catch(console.error);
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((d) => d.settings?.popup_delay_seconds && setDelay(String(d.settings.popup_delay_seconds)))
       .catch(console.error);
   }, []);
 
@@ -206,6 +230,36 @@ export default function PopupsPage() {
         >
           New Popup
         </button>
+      </div>
+
+      {/* Timing: how long after a visitor lands the popup appears (site setting) */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-surface border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-inter">
+        <div className="flex items-center gap-3">
+          <span className="material-symbols-outlined text-primary text-2xl">timer</span>
+          <div>
+            <p className="text-sm text-white font-semibold">Show popup after</p>
+            <p className="text-xs text-secondary">Seconds after a visitor opens the website. 0 shows it right away.</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min={0}
+            max={600}
+            value={delay}
+            onChange={(e) => setDelay(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && saveDelay()}
+            className="w-24 bg-[#0A0A0A] border border-white/5 rounded-xl p-2.5 text-white text-sm focus:outline-none focus:border-primary"
+          />
+          <span className="text-xs text-secondary">sec</span>
+          <button
+            onClick={saveDelay}
+            disabled={delayState === "saving"}
+            className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold uppercase tracking-wider text-white disabled:opacity-60 cursor-pointer"
+          >
+            {delayState === "saving" ? "Saving…" : delayState === "saved" ? "Saved ✓" : "Save"}
+          </button>
+        </div>
       </div>
 
       {/* List */}

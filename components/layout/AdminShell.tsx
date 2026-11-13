@@ -33,7 +33,8 @@ export default function AdminShell({ children }: AdminShellProps) {
     if (pathname.startsWith("/clients")) return "Registered Clients";
     if (pathname.startsWith("/programs")) return "Programs Management";
     if (pathname.startsWith("/team")) return "Team Members & Coaches";
-    if (pathname.startsWith("/events")) return "Upcoming Events & Popup";
+    if (pathname.startsWith("/events")) return "Upcoming Events";
+    if (pathname.startsWith("/popups")) return "Website Popups";
     if (pathname.startsWith("/community")) return "Community & Past Showcases";
     if (pathname.startsWith("/blog")) return "Blog Posts & Articles";
     if (pathname.startsWith("/inquiries")) return "Contact Inquiries";

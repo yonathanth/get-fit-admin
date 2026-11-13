@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { title, slug, eventDate, category, description, coverImageUrl, galleryUrls, highlights } = body;
+    const { title, slug, eventDate, category, description, coverImageUrl, galleryUrls, highlights, location, attendees, paragraphs } = body;
 
     if (!title || !eventDate || !description || !coverImageUrl) {
       return NextResponse.json({ error: "Title, event date, description, and cover image are required" }, { status: 400 });
@@ -46,6 +46,9 @@ export async function POST(req: NextRequest) {
         coverImageUrl,
         galleryUrls: galleryArray,
         highlights: highlightsArray,
+        location: location || "Full Facility Arena",
+        attendees: Number.parseInt(String(attendees ?? ""), 10) || 50,
+        paragraphs: toParagraphs(paragraphs),
       },
     });
 
@@ -54,6 +57,13 @@ export async function POST(req: NextRequest) {
     console.error("Community POST error:", error);
     return NextResponse.json({ error: "Failed to create community showcase" }, { status: 500 });
   }
+}
+
+/** Article text: blank line between paragraphs. Accepts an array or a string. */
+function toParagraphs(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map(String).map((p) => p.trim()).filter(Boolean);
+  if (typeof value !== "string") return [];
+  return value.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 }
 
 export async function PATCH(req: NextRequest) {
@@ -65,13 +75,17 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Showcase ID is required" }, { status: 400 });
     }
 
-    if (data.galleryUrls && typeof data.galleryUrls === "string") {
+    // Text areas arrive as strings (possibly empty) and are stored as arrays
+    if (typeof data.galleryUrls === "string") {
       data.galleryUrls = data.galleryUrls.split("\n").map((s: string) => s.trim()).filter(Boolean);
     }
-
-    if (data.highlights && typeof data.highlights === "string") {
+    if (typeof data.highlights === "string") {
       data.highlights = data.highlights.split("\n").map((s: string) => s.trim()).filter(Boolean);
     }
+    if ("paragraphs" in data) data.paragraphs = toParagraphs(data.paragraphs);
+    if ("attendees" in data) data.attendees = Number.parseInt(String(data.attendees ?? ""), 10) || 0;
+    delete data.createdAt;
+    delete data.updatedAt;
 
     const showcase = await prisma.communityShowcase.update({
       where: { id },

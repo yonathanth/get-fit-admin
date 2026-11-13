@@ -10,7 +10,8 @@ async function main() {
   const passwordHash = await bcrypt.hash("Admin@GetFit2026", 10);
   const admin = await prisma.user.upsert({
     where: { username: "admin" },
-    update: { passwordHash },
+    // Only creates the admin account if missing; never resets an existing password
+    update: {},
     create: {
       username: "admin",
       name: "Admin Director",
@@ -103,20 +104,23 @@ async function main() {
     }
   ];
 
-  await prisma.program.deleteMany({
-    where: { name: { notIn: programsData.map(p => p.name) } }
-  });
 
-  for (const prog of programsData) {
-    const existing = await prisma.program.findFirst({ where: { name: prog.name } });
-    if (existing) {
-      await prisma.program.update({
-        where: { id: existing.id },
-        data: prog
-      });
-    } else {
-      await prisma.program.create({ data: prog });
+  // Placeholder content is only inserted into an empty table, so re-running the
+  // seed never overwrites or re-creates anything managed in the admin.
+  if ((await prisma.program.count()) === 0) {
+    for (const prog of programsData) {
+      const existing = await prisma.program.findFirst({ where: { name: prog.name } });
+      if (existing) {
+        await prisma.program.update({
+          where: { id: existing.id },
+          data: prog
+        });
+      } else {
+        await prisma.program.create({ data: prog });
+      }
     }
+  } else {
+    console.log("Programs: table already has data, skipping placeholders.");
   }
   console.log("Seeded programs.");
 
@@ -329,16 +333,19 @@ async function main() {
     }
   ];
 
-  await prisma.teamMember.deleteMany({
-    where: { slug: { notIn: teamData.map(t => t.slug) } }
-  });
 
-  for (const coach of teamData) {
-    await prisma.teamMember.upsert({
-      where: { slug: coach.slug },
-      update: coach,
-      create: coach
-    });
+  // Placeholder content is only inserted into an empty table, so re-running the
+  // seed never overwrites or re-creates anything managed in the admin.
+  if ((await prisma.teamMember.count()) === 0) {
+    for (const coach of teamData) {
+      await prisma.teamMember.upsert({
+        where: { slug: coach.slug },
+        update: coach,
+        create: coach
+      });
+    }
+  } else {
+    console.log("Team members: table already has data, skipping placeholders.");
   }
   console.log("Seeded team members (Management + Trainers).");
 
@@ -520,16 +527,19 @@ async function main() {
     }
   ];
 
-  await prisma.membershipPlan.deleteMany({
-    where: { slug: { notIn: membershipPlansData.map(m => m.slug) } }
-  });
 
-  for (const plan of membershipPlansData) {
-    await prisma.membershipPlan.upsert({
-      where: { slug: plan.slug },
-      update: plan,
-      create: plan
-    });
+  // Placeholder content is only inserted into an empty table, so re-running the
+  // seed never overwrites or re-creates anything managed in the admin.
+  if ((await prisma.membershipPlan.count()) === 0) {
+    for (const plan of membershipPlansData) {
+      await prisma.membershipPlan.upsert({
+        where: { slug: plan.slug },
+        update: plan,
+        create: plan
+      });
+    }
+  } else {
+    console.log("Membership plans: table already has data, skipping placeholders.");
   }
   console.log("Seeded membership plans.");
 
@@ -641,12 +651,18 @@ async function main() {
     }
   ];
 
-  for (const ev of eventsData) {
-    await prisma.upcomingEvent.upsert({
-      where: { slug: ev.slug },
-      update: ev,
-      create: ev
-    });
+  // Placeholder content is only inserted into an empty table, so re-running the
+  // seed never overwrites or re-creates anything managed in the admin.
+  if ((await prisma.upcomingEvent.count()) === 0) {
+    for (const ev of eventsData) {
+      await prisma.upcomingEvent.upsert({
+        where: { slug: ev.slug },
+        update: ev,
+        create: ev
+      });
+    }
+  } else {
+    console.log("Events: table already has data, skipping placeholders.");
   }
   console.log("Seeded events.");
 
@@ -741,12 +757,18 @@ async function main() {
     }
   ];
 
-  for (const sc of showcaseData) {
-    await prisma.communityShowcase.upsert({
-      where: { slug: sc.slug },
-      update: sc,
-      create: sc
-    });
+  // Placeholder content is only inserted into an empty table, so re-running the
+  // seed never overwrites or re-creates anything managed in the admin.
+  if ((await prisma.communityShowcase.count()) === 0) {
+    for (const sc of showcaseData) {
+      await prisma.communityShowcase.upsert({
+        where: { slug: sc.slug },
+        update: sc,
+        create: sc
+      });
+    }
+  } else {
+    console.log("Community showcases: table already has data, skipping placeholders.");
   }
   console.log("Seeded community showcases.");
 
@@ -793,19 +815,26 @@ async function main() {
     }
   ];
 
-  for (const b of blogData) {
-    await prisma.blogPost.upsert({
-      where: { slug: b.slug },
-      update: b,
-      create: b
-    });
+  // Placeholder content is only inserted into an empty table, so re-running the
+  // seed never overwrites or re-creates anything managed in the admin.
+  if ((await prisma.blogPost.count()) === 0) {
+    for (const b of blogData) {
+      await prisma.blogPost.upsert({
+        where: { slug: b.slug },
+        update: b,
+        create: b
+      });
+    }
+  } else {
+    console.log("Blog posts: table already has data, skipping placeholders.");
   }
   console.log("Seeded blog posts.");
 
   // 8. Seed Gym Settings
   const settingsData = [
     { key: "gym_name", value: "Get Fit Gym", description: "Official gym brand name" },
-    { key: "video_tour_url", value: "https://www.youtube.com/embed/dQw4w9WgXcQ", description: "Virtual facility video tour embed URL" },
+    { key: "video_tour_url", value: "xEmaKZoDggTHIm3kNryHGS3yJ5aeI1A6yvPVMg901bJk", description: "Mux playback ID (or player.mux.com link) for the video tour" },
+    { key: "popup_delay_seconds", value: "10", description: "Seconds before the featured-event popup appears" },
     { key: "phone_primary", value: "0911-415-862", description: "Main reception phone" },
     { key: "phone_secondary", value: "0992 222 224", description: "Secondary phone" },
     { key: "email_address", value: "getfitt26@gmail.com", description: "Contact email" },
@@ -822,7 +851,7 @@ async function main() {
   for (const s of settingsData) {
     await prisma.gymSetting.upsert({
       where: { key: s.key },
-      update: s,
+      update: {}, // never overwrite values edited in the admin
       create: s
     });
   }

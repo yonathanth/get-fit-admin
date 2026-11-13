@@ -2,6 +2,18 @@
 
 import { useEffect, useState } from "react";
 
+/** Converts the form's text areas to the arrays stored in the database. */
+function toEventPayload(form: Record<string, unknown>) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { paragraphsText, galleryText, createdAt, updatedAt, ...rest } = form;
+  return {
+    ...rest,
+    dateString: String(form.dateString ?? "").trim() || null,
+    paragraphs: String(paragraphsText ?? "").split(/\n\s*\n/).map((p: string) => p.trim()).filter(Boolean),
+    galleryUrls: String(galleryText ?? "").split("\n").map((u: string) => u.trim()).filter(Boolean),
+  };
+}
+
 export default function EventsPage() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +75,7 @@ export default function EventsPage() {
       const res = await fetch("/api/events", {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(toEventPayload(formData)),
       });
 
       if (res.ok) {
@@ -94,7 +106,7 @@ export default function EventsPage() {
             Upcoming Events & <span className="text-primary">Popup Selector</span>
           </h2>
           <p className="text-xs sm:text-sm font-inter text-secondary mt-0.5">
-            Manage scheduled events and choose which event appears in the 10-second public modal
+            Manage scheduled events. For discounts, announcements and scheduling, use Website Popups.
           </p>
         </div>
 
@@ -214,6 +226,9 @@ export default function EventsPage() {
                       setFormData({
                         ...event,
                         eventDate: new Date(event.eventDate).toISOString().slice(0, 10),
+                        dateString: event.dateString ?? "",
+                        paragraphsText: (event.paragraphs || []).join("\n\n"),
+                        galleryText: (event.galleryUrls || []).join("\n"),
                       });
                       setShowModal(true);
                     }}
@@ -347,6 +362,45 @@ export default function EventsPage() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Detailed description of the seminar agenda..."
                   className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
+                  Event page article <span className="normal-case tracking-normal text-white/40">(optional, blank line between paragraphs)</span>
+                </label>
+                <textarea
+                  rows={6}
+                  value={formData.paragraphsText ?? ""}
+                  onChange={(e) => setFormData({ ...formData, paragraphsText: e.target.value })}
+                  placeholder={"First paragraph shown on the event's page...\n\nSecond paragraph..."}
+                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary resize-y"
+                />
+              </div>
+
+              <div>
+                <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
+                  Gallery image URLs <span className="normal-case tracking-normal text-white/40">(optional, one per line)</span>
+                </label>
+                <textarea
+                  rows={3}
+                  value={formData.galleryText ?? ""}
+                  onChange={(e) => setFormData({ ...formData, galleryText: e.target.value })}
+                  placeholder="https://..."
+                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary resize-y font-mono text-[11px]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
+                  Custom date text <span className="normal-case tracking-normal text-white/40">(optional, overrides the date shown on the site)</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.dateString ?? ""}
+                  onChange={(e) => setFormData({ ...formData, dateString: e.target.value })}
+                  placeholder="e.g. Every Saturday in May"
+                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
                 />
               </div>
 

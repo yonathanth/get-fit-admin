@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { title, slug, eventDate, timeString, location, description, imageUrl, totalSpots, isPopupFeatured, status } = body;
+    const { title, slug, eventDate, timeString, location, description, imageUrl, totalSpots, isPopupFeatured, status, dateString, paragraphs, galleryUrls } = body;
 
     if (!title || !eventDate || !timeString || !description || !imageUrl) {
       return NextResponse.json({ error: "Required fields are missing" }, { status: 400 });
@@ -41,6 +41,9 @@ export async function POST(req: NextRequest) {
         location: location || "Get Fit Gym Arena",
         description,
         imageUrl,
+        dateString: dateString || null,
+        paragraphs: Array.isArray(paragraphs) ? paragraphs : [],
+        galleryUrls: Array.isArray(galleryUrls) ? galleryUrls : [],
         totalSpots: totalSpots ? parseInt(totalSpots, 10) : 50,
         remainingSpots: totalSpots ? parseInt(totalSpots, 10) : 50,
         isPopupFeatured: Boolean(isPopupFeatured),

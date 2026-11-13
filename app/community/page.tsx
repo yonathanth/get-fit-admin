@@ -15,6 +15,9 @@ export default function CommunityPage() {
     coverImageUrl: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200&q=80",
     galleryUrls: "",
     highlights: "",
+    location: "Full Facility Arena",
+    attendees: 50,
+    paragraphs: "",
   });
 
   const fetchShowcases = async () => {
@@ -168,6 +171,7 @@ export default function CommunityPage() {
                         ...sc,
                         galleryUrls: Array.isArray(sc.galleryUrls) ? sc.galleryUrls.join("\n") : sc.galleryUrls,
                         highlights: Array.isArray(sc.highlights) ? sc.highlights.join("\n") : sc.highlights,
+                        paragraphs: Array.isArray(sc.paragraphs) ? sc.paragraphs.join("\n\n") : sc.paragraphs ?? "",
                       });
                       setShowModal(true);
                     }}
@@ -275,6 +279,46 @@ export default function CommunityPage() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Recap story describing the gathering..."
                   className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.location ?? ""}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    placeholder="Full Facility Arena"
+                    className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
+                    Attendees
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={formData.attendees ?? ""}
+                    onChange={(e) => setFormData({ ...formData, attendees: e.target.value })}
+                    className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-secondary uppercase tracking-wider mb-1.5 font-semibold">
+                  Showcase page article (optional, blank line between paragraphs)
+                </label>
+                <textarea
+                  rows={5}
+                  value={formData.paragraphs ?? ""}
+                  onChange={(e) => setFormData({ ...formData, paragraphs: e.target.value })}
+                  placeholder={"First paragraph...\n\nSecond paragraph..."}
+                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary resize-y"
                 />
               </div>
 

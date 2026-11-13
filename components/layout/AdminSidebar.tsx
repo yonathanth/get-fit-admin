@@ -18,6 +18,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     { name: "Programs & Plans", href: "/programs", icon: "fitness_center" },
     { name: "Team Members", href: "/team", icon: "badge" },
     { name: "Upcoming Events", href: "/events", icon: "event" },
+    { name: "Website Popups", href: "/popups", icon: "campaign" },
     { name: "Community & Past", href: "/community", icon: "auto_awesome" },
     { name: "Blog Posts", href: "/blog", icon: "article" },
     { name: "Gym Settings", href: "/settings", icon: "settings" },

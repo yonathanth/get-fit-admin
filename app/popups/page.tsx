@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ImageUpload from "@/components/ui/ImageUpload";
 
 type PopupType = "EVENT" | "DISCOUNT" | "ANNOUNCEMENT";
 
@@ -489,17 +490,16 @@ export default function PopupsPage() {
 
               <div>
                 <label className={labelCls}>
-                  Image URL{" "}
+                  Image{" "}
                   <span className="normal-case tracking-normal text-white/40">
                     (optional{form.type === "EVENT" ? ", defaults to the event's banner" : ""})
                   </span>
                 </label>
-                <input
-                  type="text"
+                <ImageUpload
                   value={form.imageUrl}
-                  onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                  placeholder="https://… or /images/hero/dsc00690.webp"
-                  className={inputCls}
+                  onChange={(url) => setForm({ ...form, imageUrl: url })}
+                  fallbackPreview={form.type === "EVENT" ? eventById(form.eventId)?.imageUrl : undefined}
+                  hint="Wide photos work best · resized automatically"
                 />
               </div>
 

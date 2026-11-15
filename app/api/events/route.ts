@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { notifySearchEngines, slugify } from "@/lib/indexnow";
 
 export async function GET() {
   try {
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Required fields are missing" }, { status: 400 });
     }
 
-    const generatedSlug = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const generatedSlug = slug || slugify(title);
 
     // If marked as popup featured, unset all others first
     if (isPopupFeatured) {
@@ -51,6 +52,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    notifySearchEngines([`/events/${event.slug}`, "/events", "/"]);
     return NextResponse.json({ success: true, event });
   } catch (error) {
     console.error("Events POST error:", error);
@@ -84,6 +86,7 @@ export async function PATCH(req: NextRequest) {
       data,
     });
 
+    notifySearchEngines([`/events/${event.slug}`, "/events"]);
     return NextResponse.json({ success: true, event });
   } catch (error) {
     console.error("Events PATCH error:", error);
@@ -100,7 +103,8 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Event ID is required" }, { status: 400 });
     }
 
-    await prisma.upcomingEvent.delete({ where: { id } });
+    const removed = await prisma.upcomingEvent.delete({ where: { id } });
+    notifySearchEngines([`/events/${removed.slug}`, "/events"]);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Events DELETE error:", error);

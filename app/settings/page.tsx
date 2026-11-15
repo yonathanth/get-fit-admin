@@ -90,6 +90,27 @@ const THEME_OPTIONS = [
 ];
 const DEFAULT_THEMES = "dark,inverted,light";
 
+GROUPS.push({
+  title: "Search Engines",
+  icon: "travel_explore",
+  fields: [
+    {
+      key: "google_site_verification",
+      label: "Google Search Console verification code",
+      placeholder: "e.g. aBc123XyZ...",
+      help: 'In Search Console choose "HTML tag" and paste only the content="..." value. Save, then click Verify in Search Console.',
+      wide: true,
+    },
+    {
+      key: "bing_site_verification",
+      label: "Bing Webmaster Tools verification code",
+      placeholder: "e.g. 1A2B3C4D...",
+      help: 'In Bing Webmaster Tools choose "HTML Meta Tag" and paste only the content="..." value (or simply import the site from Google Search Console).',
+      wide: true,
+    },
+  ],
+});
+
 const ALL_KEYS = [...GROUPS.flatMap((g) => g.fields.map((f) => f.key)), "website_themes"];
 
 export default function SettingsPage() {

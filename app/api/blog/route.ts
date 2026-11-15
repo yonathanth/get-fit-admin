@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { notifySearchEngines, slugify } from "@/lib/indexnow";
 
 export async function GET() {
   try {
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Required fields are missing" }, { status: 400 });
     }
 
-    const generatedSlug = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const generatedSlug = slug || slugify(title);
 
     const post = await prisma.blogPost.create({
       data: {
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    if (post.isPublished) notifySearchEngines([`/blog/${post.slug}`, "/blog", "/"]);
     return NextResponse.json({ success: true, post });
   } catch (error) {
     console.error("Blog POST error:", error);
@@ -61,6 +63,7 @@ export async function PATCH(req: NextRequest) {
       data,
     });
 
+    notifySearchEngines([`/blog/${post.slug}`, "/blog"]);
     return NextResponse.json({ success: true, post });
   } catch (error) {
     console.error("Blog PATCH error:", error);
@@ -77,7 +80,8 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
     }
 
-    await prisma.blogPost.delete({ where: { id } });
+    const removed = await prisma.blogPost.delete({ where: { id } });
+    notifySearchEngines([`/blog/${removed.slug}`, "/blog"]);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Blog DELETE error:", error);

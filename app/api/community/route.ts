@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { notifySearchEngines, slugify } from "@/lib/indexnow";
 
 export async function GET() {
   try {
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Title, event date, description, and cover image are required" }, { status: 400 });
     }
 
-    const generatedSlug = slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const generatedSlug = slug || slugify(title);
 
     const galleryArray = Array.isArray(galleryUrls)
       ? galleryUrls
@@ -52,6 +53,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    notifySearchEngines([`/showcase/${showcase.slug}`, "/about"]);
     return NextResponse.json({ success: true, showcase });
   } catch (error) {
     console.error("Community POST error:", error);
@@ -92,6 +94,7 @@ export async function PATCH(req: NextRequest) {
       data,
     });
 
+    notifySearchEngines([`/showcase/${showcase.slug}`]);
     return NextResponse.json({ success: true, showcase });
   } catch (error) {
     console.error("Community PATCH error:", error);
@@ -108,7 +111,8 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Showcase ID is required" }, { status: 400 });
     }
 
-    await prisma.communityShowcase.delete({ where: { id } });
+    const removed = await prisma.communityShowcase.delete({ where: { id } });
+    notifySearchEngines([`/showcase/${removed.slug}`, "/about"]);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Community DELETE error:", error);

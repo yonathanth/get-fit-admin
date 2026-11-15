@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { notifySearchEngines } from "@/lib/indexnow";
 
 export async function GET() {
   try {
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    notifySearchEngines([`/team/${member.slug}`, "/about"]);
     return NextResponse.json({ success: true, member });
   } catch (error: any) {
     console.error("Team POST error:", error);
@@ -90,6 +92,7 @@ export async function PATCH(req: NextRequest) {
       data,
     });
 
+    notifySearchEngines([`/team/${member.slug}`, "/about"]);
     return NextResponse.json({ success: true, member });
   } catch (error: any) {
     console.error("Team PATCH error:", error);
@@ -106,7 +109,8 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Team Member ID is required" }, { status: 400 });
     }
 
-    await prisma.teamMember.delete({ where: { id } });
+    const removed = await prisma.teamMember.delete({ where: { id } });
+    notifySearchEngines([`/team/${removed.slug}`, "/about"]);
     return NextResponse.json({ success: true, message: "Team member deleted" });
   } catch (error) {
     console.error("Team DELETE error:", error);

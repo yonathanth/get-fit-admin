@@ -67,7 +67,30 @@ const GROUPS: { title: string; icon: string; fields: Field[] }[] = [
   },
 ];
 
-const ALL_KEYS = GROUPS.flatMap((g) => g.fields.map((f) => f.key));
+/** Color themes visitors can switch between on the website (get-fit-gym/lib/theme.ts). */
+const THEME_OPTIONS = [
+  {
+    id: "dark",
+    label: "Dark",
+    help: "The standard look: black background, gold accents.",
+    swatch: ["#0a0a0a", "#d9972b", "#ffffff"],
+  },
+  {
+    id: "inverted",
+    label: "Gold",
+    help: "Gold background with black accents (dark theme with the colors swapped).",
+    swatch: ["#d9972b", "#0a0a0a", "#e0a23e"],
+  },
+  {
+    id: "light",
+    label: "Light",
+    help: "Warm white background, dark text, gold accents.",
+    swatch: ["#faf7f2", "#b97b16", "#17140f"],
+  },
+];
+const DEFAULT_THEMES = "dark,inverted,light";
+
+const ALL_KEYS = [...GROUPS.flatMap((g) => g.fields.map((f) => f.key)), "website_themes"];
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -75,6 +98,15 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  const enabledThemes = (settings.website_themes?.trim() || DEFAULT_THEMES).split(",").map((s) => s.trim());
+  const toggleTheme = (id: string) => {
+    const next = enabledThemes.includes(id) ? enabledThemes.filter((t) => t !== id) : [...enabledThemes, id];
+    if (next.length === 0) return; // at least one theme must stay on
+    // Keep the website's toggle order
+    const ordered = THEME_OPTIONS.map((o) => o.id).filter((o) => next.includes(o));
+    setSettings({ ...settings, website_themes: ordered.join(",") });
+  };
 
   useEffect(() => {
     (async () => {
@@ -123,7 +155,7 @@ export default function SettingsPage() {
             Facility <span className="text-primary">Settings</span>
           </h2>
           <p className="text-xs sm:text-sm font-inter text-secondary mt-0.5">
-            Contact details, opening hours, social links and the video tour shown on the public website
+            Contact details, opening hours, social links, the video tour and the color themes shown on the public website
           </p>
         </div>
 
@@ -176,6 +208,59 @@ export default function SettingsPage() {
               </div>
             </div>
           ))}
+
+          {/* Website themes */}
+          <div className="p-6 sm:p-8 rounded-2xl bg-surface border border-white/5 space-y-5">
+            <div className="border-b border-white/5 pb-3">
+              <h3 className="text-2xl font-impact text-white uppercase tracking-tight italic flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-xl">palette</span>
+                <span>Website Themes</span>
+              </h3>
+              <p className="mt-1 text-[11px] text-white/40 leading-relaxed">
+                Choose which color themes visitors can switch between with the theme button in the website menu. Visitors
+                start on Dark when it&apos;s on. With only one theme on, the button is hidden.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {THEME_OPTIONS.map((o) => {
+                const on = enabledThemes.includes(o.id);
+                const last = on && enabledThemes.length === 1;
+                return (
+                  <button
+                    key={o.id}
+                    type="button"
+                    role="switch"
+                    aria-checked={on}
+                    onClick={() => toggleTheme(o.id)}
+                    disabled={last}
+                    title={last ? "At least one theme must stay on" : undefined}
+                    className={`text-left rounded-xl border p-4 transition-colors ${
+                      on ? "border-primary bg-primary/10" : "border-white/10 bg-[#0A0A0A] hover:border-white/25"
+                    } ${last ? "cursor-not-allowed" : "cursor-pointer"}`}
+                  >
+                    {/* Mini preview */}
+                    <div
+                      className="mb-3 h-14 rounded-lg border border-white/10 p-2 flex flex-col justify-between"
+                      style={{ background: o.swatch[0] }}
+                    >
+                      <span className="block h-1.5 w-10 rounded-full" style={{ background: o.swatch[2] }} />
+                      <span className="block h-3 w-14 rounded-full" style={{ background: o.swatch[1] }} />
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm font-semibold text-white">{o.label}</span>
+                      <span
+                        className={`material-symbols-outlined text-xl ${on ? "text-primary" : "text-white/25"}`}
+                      >
+                        {on ? "toggle_on" : "toggle_off"}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[11px] text-white/45 leading-relaxed">{o.help}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <div className="flex justify-end">
             <button

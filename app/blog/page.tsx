@@ -322,13 +322,27 @@ export default function BlogAdminPage() {
                   Article Body Content *
                 </label>
                 <textarea
-                  rows={6}
+                  rows={14}
                   required
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  placeholder="Full article content text..."
-                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary leading-relaxed"
+                  placeholder={"Start with a strong opening paragraph...\n\n## A section heading\n\nMore text. Leave an empty line between paragraphs."}
+                  className="w-full bg-[#0A0A0A] border border-white/5 rounded-xl p-3 text-white focus:outline-none focus:border-primary leading-relaxed font-mono text-[12px]"
                 />
+                <details className="mt-2 text-[11px] text-white/45">
+                  <summary className="cursor-pointer select-none hover:text-white/70">Formatting tips (headings, lists, quotes, images)</summary>
+                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 rounded-xl border border-white/5 bg-[#0A0A0A] p-3 font-mono leading-relaxed">
+                    <span><span className="text-primary">## Heading</span> — section title</span>
+                    <span><span className="text-primary">### Heading</span> — smaller title</span>
+                    <span><span className="text-primary">- item</span> — bullet list (one per line)</span>
+                    <span><span className="text-primary">1. item</span> — numbered list</span>
+                    <span><span className="text-primary">&gt; text</span> — big pull quote</span>
+                    <span><span className="text-primary">**bold**</span> · <span className="text-primary">*italic*</span></span>
+                    <span><span className="text-primary">[text](https://...)</span> — link</span>
+                    <span><span className="text-primary">![caption](image-url)</span> — image</span>
+                    <span className="sm:col-span-2 font-inter">Leave an empty line between paragraphs. The first paragraph is shown larger as the intro.</span>
+                  </div>
+                </details>
               </div>
 
               <div className="flex items-center gap-3 p-3 rounded-xl bg-[#0A0A0A] border border-white/5">
